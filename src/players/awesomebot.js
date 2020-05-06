@@ -34,7 +34,7 @@ export default {
   },
   ai: function (player, enemies, game) {
     log("Executing my AI function", player, enemies, game);
-    
+
     const possibleFutureTarget = () => {
       const futureEnemies = enemies.map(enemy=>{
         enemy.position = calculateNewPosition(enemy, game)
@@ -54,7 +54,7 @@ export default {
         return 'move'
       }
     }
-    
+
     // Check if we are in immediate danger, if so try to move
     const threats = threatsFacingMe(player, enemies);
     if (threats.length > 0) {
@@ -106,10 +106,10 @@ export default {
             distance: calculateDistance(player.position, enemy.position),
           }))
           .sort((enemy1, enemy2) => enemy1.distance - enemy2.distance);
-      
+
         return sortedEnemies.length > 0 ? sortedEnemies[0].position : null;
       };
-      
+
       const closestEnemy = findClosestEnemy(player, enemies)
       const enemyDir = calculateHeading(player.position, closestEnemy)
       if (enemyDir === player.direction) {
@@ -137,12 +137,14 @@ export default {
     // Nothing else to do ... lets just make a random move
     log("Bummer, found nothing interesting to do ... making random move");
     // make a random safe move
-    const nextMoveIsNotSafe = true
-    while (nextMoveIsNotSafe) {
+    let count = 0
+    while (count < 10) {
       const nextMove = makeRandomMove()
       if (isActionSafe(player, nextMove, enemies, game)) {
         return nextMove
       }
+      count++
     }
+    return ''
   },
 };
