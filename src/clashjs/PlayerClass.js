@@ -10,7 +10,7 @@ class PlayerClass {
       this._playerInfo.name = generateBotName()
     }
     const style = parseInt(this._playerInfo.style, 10)
-    if (isNaN(style) || style < 0 || style > 110) {
+    if (isNaN(style) || style < 0 || style > 111) {
       // randomly assign a style
       this._playerInfo.style = random(110)
     }
