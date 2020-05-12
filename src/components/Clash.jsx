@@ -50,7 +50,7 @@ const everybody = bot =>
 
 playerArray = playerArray.filter(groupD)
 
-const killsStack = []
+let killsStack = []
 
 const DEFAULT_SPEED = 200
 const MAX_SPEED = 50
