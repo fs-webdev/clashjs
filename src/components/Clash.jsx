@@ -1,66 +1,65 @@
-import React from "react";
-import _ from "lodash";
-import { Grid, Cell } from "styled-css-grid";
+import React from 'react'
+import _ from 'lodash'
+import { Grid, Cell } from 'styled-css-grid'
 import {
   enableSounds,
   disableSounds,
   playSound,
   startMusic,
   stopMusic,
-  streaks,
-} from "./../lib/sound-effects";
-import Tiles from "./Tiles.jsx";
-import Ammos from "./Ammos.jsx";
-import Cargo from "./Cargo.jsx";
-import Asteroids from "./Asteroids.jsx";
-import Players from "./Players.jsx";
-import Stats from "./Stats.jsx";
-import Shoots from "./Shoots.jsx";
-import Notifications from "./Notifications.jsx";
-import ControlPanel from "./ControlPanel.jsx";
-import DebugPanel from "./DebugPanel.jsx";
-import StatsModal from "./StatsModal";
+  streaks
+} from './../lib/sound-effects'
+import Tiles from './Tiles.jsx'
+import Ammos from './Ammos.jsx'
+import Cargo from './Cargo.jsx'
+import Asteroids from './Asteroids.jsx'
+import Players from './Players.jsx'
+import Stats from './Stats.jsx'
+import Shoots from './Shoots.jsx'
+import Notifications from './Notifications.jsx'
+import ControlPanel from './ControlPanel.jsx'
+import DebugPanel from './DebugPanel.jsx'
+import StatsModal from './StatsModal'
 
-import ClashJS from "../clashjs/ClashCore.js";
+import ClashJS from '../clashjs/ClashCore.js'
 
-import playerObjects from "../Players.js";
+import playerObjects from '../Players.js'
 
-import debug from "debug";
+import debug from 'debug'
 
-const log = debug("clashjs:Clash");
+const log = debug('clashjs:Clash')
 
 // Filter
 
-var playerArray = _.shuffle(
-  _.map(playerObjects, (el) => (el.default ? el.default : el))
-);
+let playerArray = _.shuffle(_.map(playerObjects, el => (el.default ? el.default : el)))
 
-const all = (bot) => true;
-const groupA = (bot) => _.includes([1, 2, 3, 4, 5], bot.info.team);
-const groupB = (bot) => _.includes([6, 7, 8, 9, 10], bot.info.team);
-const groupC = (bot) => _.includes([11, 12, 13, 14, 15], bot.info.team);
-const groupD = (bot) => _.includes([16, 17, 18, 19, 20], bot.info.team);
-const groupE = (bot) => _.includes([21, 22, 23, 24, 25], bot.info.team);
-const semi1 = (bot) => _.includes([], bot.info.team);
-const semi2 = (bot) => _.includes([], bot.info.team);
-const final = (bot) => _.includes([], bot.info.team);
+const all = bot => true
+const groupA = bot => _.includes([1, 2, 3, 4, 5], bot.info.team)
+const groupB = bot => _.includes([6, 7, 8, 9, 10], bot.info.team)
+const groupC = bot => _.includes([11, 12, 13, 14, 15], bot.info.team)
+const groupD = bot => _.includes([16, 17, 18, 19, 20], bot.info.team)
+const groupE = bot => _.includes([21, 22, 23, 24, 25], bot.info.team)
+const semi1 = bot => _.includes([], bot.info.team)
+const semi2 = bot => _.includes([], bot.info.team)
+const final = bot => _.includes([], bot.info.team)
+const everybody = bot =>
+  _.includes(
+    [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25],
+    bot.info.team
+  )
 
-playerArray = playerArray.filter(groupA);
+playerArray = playerArray.filter(groupD)
 
-var killsStack = [];
+const killsStack = []
 
-const DEFAULT_SPEED = 200;
-const MAX_SPEED = 50;
+const DEFAULT_SPEED = 200
+const MAX_SPEED = 50
 
 class Clash extends React.Component {
   constructor(props) {
-    super(props);
+    super(props)
 
-    window.ClashInstance = new ClashJS(
-      playerArray,
-      {},
-      this.handleEvent.bind(this)
-    );
+    window.ClashInstance = new ClashJS(playerArray, {}, this.handleEvent.bind(this))
 
     // window.ClashInstance.target.addEventListener("DATA", evt => {
     //   this.handleEvent(evt.detail.name, evt.detail.data);
@@ -80,298 +79,284 @@ class Clash extends React.Component {
       notifications: [],
       currentGameIndex: 1,
       finished: false,
-      showStats: false,
-    };
-    this.state.sounds ? enableSounds() : disableSounds();
+      showStats: false
+    }
+    this.state.sounds ? enableSounds() : disableSounds()
   }
 
   componentDidMount() {
-    window.addEventListener("keydown", (evt) => {
+    window.addEventListener('keydown', evt => {
       // log('keydown', evt.code, evt.key)
-      if (evt.key === "d") {
-        this.setState((prevState) => ({
-          showDebug: !prevState.showDebug,
-        }));
+      if (evt.key === 'd') {
+        this.setState(prevState => ({
+          showDebug: !prevState.showDebug
+        }))
       }
-      if (evt.code === "Space") {
-        this.handleToggleRunning();
+      if (evt.code === 'Space') {
+        this.handleToggleRunning()
       }
-      if (evt.code === "KeyS") {
-        this.handleToggleSounds();
+      if (evt.code === 'KeyS') {
+        this.handleToggleSounds()
       }
-      if (evt.code === "KeyM") {
-        this.handleToggleMusic();
+      if (evt.code === 'KeyM') {
+        this.handleToggleMusic()
       }
-      if (evt.key === "0") {
-        this.handleChangeSpeed(0);
+      if (evt.key === '0') {
+        this.handleChangeSpeed(0)
       }
-      if (evt.key === "1") {
-        this.handleChangeSpeed(100);
+      if (evt.key === '1') {
+        this.handleChangeSpeed(100)
       }
-      if (evt.key === "2") {
-        this.handleChangeSpeed(200);
+      if (evt.key === '2') {
+        this.handleChangeSpeed(200)
       }
-      if (evt.key === "9") {
-        this.handleChangeSpeed(1000);
+      if (evt.key === '9') {
+        this.handleChangeSpeed(1000)
       }
-    });
+    })
   }
 
   handleClick() {
     this.setState({
-      speed: Math.floor(this.state.speed * 0.9),
-    });
-    this.nextTurn();
+      speed: Math.floor(this.state.speed * 0.9)
+    })
+    this.nextTurn()
   }
 
   handleToggleRunning() {
     this.setState(
-      (prevState) => {
+      prevState => {
         return {
-          running: !prevState.running,
-        };
+          running: !prevState.running
+        }
       },
       () => {
-        if (this.state.running) this.nextTurn();
+        if (this.state.running) this.nextTurn()
       }
-    );
+    )
   }
 
   handleToggleSounds() {
     this.setState(
-      (prevState) => ({
-        sounds: !prevState.sounds,
+      prevState => ({
+        sounds: !prevState.sounds
       }),
       () => {
         if (this.state.sounds) {
-          enableSounds();
-          startMusic();
+          enableSounds()
+          startMusic()
         } else {
-          disableSounds();
-          stopMusic();
+          disableSounds()
+          stopMusic()
         }
       }
-    );
+    )
   }
 
   handleToggleMusic() {
     // log('toggle music', this.state.music)
     this.setState(
-      (prevState) => ({
-        music: !prevState.music,
+      prevState => ({
+        music: !prevState.music
       }),
       () => {
         if (this.state.music) {
           //  enableSounds()
-          startMusic();
+          startMusic()
         } else {
           //  disableSounds()
-          stopMusic();
+          stopMusic()
         }
       }
-    );
+    )
   }
 
   handleToggleStats() {
-    this.setState((prevState) => ({
-      showStats: !prevState.showStats,
-    }));
+    this.setState(prevState => ({
+      showStats: !prevState.showStats
+    }))
   }
 
   handleToggleAsteroids() {
-    this.setState((prevState) => {
-      const newValue = !prevState.asteroidsOn;
-      window.ClashInstance.setAsteroidsOn(newValue);
+    this.setState(prevState => {
+      const newValue = !prevState.asteroidsOn
+      window.ClashInstance.setAsteroidsOn(newValue)
       return {
-        asteroidsOn: newValue,
-      };
-    });
+        asteroidsOn: newValue
+      }
+    })
   }
 
   handleToggleCargo() {
-    this.setState((prevState) => {
-      const newValue = !prevState.cargoOn;
-      window.ClashInstance.setCargoOn(newValue);
+    this.setState(prevState => {
+      const newValue = !prevState.cargoOn
+      window.ClashInstance.setCargoOn(newValue)
       if (newValue) {
         return {
-          cargoOn: newValue,
-        };
+          cargoOn: newValue
+        }
       } else {
         return {
           cargoOn: newValue,
-          cargos: [],
-        };
+          cargos: []
+        }
       }
-    });
+    })
   }
 
   handleChangeSpeed(newSpeed) {
-    log("handleChangeSpeed", newSpeed);
+    log('handleChangeSpeed', newSpeed)
     this.setState({
-      speedOverride: newSpeed,
-    });
+      speedOverride: newSpeed
+    })
   }
 
   newRound() {
-    killsStack = [];
+    killsStack = []
 
-    if (this.nextTurnTimeout) clearTimeout(this.nextTurnTimeout);
+    if (this.nextTurnTimeout) clearTimeout(this.nextTurnTimeout)
 
-    window.ClashInstance.setupGame();
+    window.ClashInstance.setupGame()
     // log('newRound setState')
     this.setState(
-      (state) => {
+      state => {
         // log('newRound setState state', state)
-        const clashjs = window.ClashInstance.getState();
+        const clashjs = window.ClashInstance.getState()
         return {
           clashjs,
           speed: this.state.speedOverride ?? DEFAULT_SPEED,
           notifications: state.notifications.concat({
             date: new Date(),
-            text: (
-              <span style={{ color: "orange" }}>
-                ~~~ New Round #{clashjs.rounds} ~~~
-              </span>
-            ),
+            text: <span style={{ color: 'orange' }}>~~~ New Round #{clashjs.rounds} ~~~</span>
           }),
-          currentGameIndex: state.currentGameIndex + 1,
-        };
+          currentGameIndex: state.currentGameIndex + 1
+        }
       },
       () => {
         // log('newRound setState callback', this.nextTurnTimeout, this.state.clashjs)
-        if (this.nextTurnTimeout) clearTimeout(this.nextTurnTimeout);
+        if (this.nextTurnTimeout) clearTimeout(this.nextTurnTimeout)
         this.nextTurnTimeout = window.setTimeout(() => {
-          this.nextTurn();
-        }, 3000);
+          this.nextTurn()
+        }, 3000)
       }
-    );
+    )
   }
 
   nextTurn() {
     // log('nextTurn', this.state)
     if (this.state.startTime === undefined) {
       if (this.state.music) {
-        startMusic();
+        startMusic()
       }
-      this.setState({ startTime: Date.now() });
+      this.setState({ startTime: Date.now() })
     }
-    if (!this.state.running || this.state.finished) return;
+    if (!this.state.running || this.state.finished) return
 
-    var currentGameIndex = this.state.currentGameIndex;
+    const currentGameIndex = this.state.currentGameIndex
 
-    if (this.nextTurnTimeout) clearTimeout(this.nextTurnTimeout);
+    if (this.nextTurnTimeout) clearTimeout(this.nextTurnTimeout)
 
     this.nextTurnTimeout = window.setTimeout(() => {
-      if (this.state.currentGameIndex !== currentGameIndex) return;
+      if (this.state.currentGameIndex !== currentGameIndex) return
 
-      var { playerStates } = window.ClashInstance.getState();
-      var alivePlayerCount = playerStates.reduce((result, el) => {
-        return el.isAlive ? result + 1 : result;
-      }, 0);
+      const { playerStates } = window.ClashInstance.getState()
+      const alivePlayerCount = playerStates.reduce((result, el) => {
+        return el.isAlive ? result + 1 : result
+      }, 0)
 
       if (alivePlayerCount < 2) {
-        window.ClashInstance.nextPly();
-        this.nextTurn();
-        return;
+        window.ClashInstance.nextPly()
+        this.nextTurn()
+        return
       }
 
-      window.ClashInstance.nextPly();
+      window.ClashInstance.nextPly()
 
       const calculatedSpeed =
-        this.state.speed > MAX_SPEED
-          ? parseInt(this.state.speed * 0.99, 10)
-          : MAX_SPEED;
+        this.state.speed > MAX_SPEED ? parseInt(this.state.speed * 0.99, 10) : MAX_SPEED
 
-      const speed = this.state.speedOverride ?? calculatedSpeed;
+      const speed = this.state.speedOverride ?? calculatedSpeed
 
       this.setState(
         {
           clashjs: window.ClashInstance.getState(),
-          speed: speed,
+          speed: speed
         },
         this.nextTurn
-      );
-    }, this.state.speed);
+      )
+    }, this.state.speed)
   }
 
   handleEvent(evt, data) {
-    if (evt === "SHOOT") {
-      let newShoots = this.state.shoots;
+    if (evt === 'SHOOT') {
+      let newShoots = this.state.shoots
       newShoots.push({
         direction: data.direction,
         origin: data.origin.slice(),
-        time: new Date().getTime(),
-      });
+        time: new Date().getTime()
+      })
 
       this.setState({
-        shoots: newShoots,
-      });
+        shoots: newShoots
+      })
     }
-    if (evt === "WIN") {
-      this.setState((state) => ({
+    if (evt === 'WIN') {
+      this.setState(state => ({
         notifications: state.notifications.concat({
           date: new Date(),
-          text: (
-            <b style={{ color: "#0e0", fontWeight: 700 }}>
-              {data.winner.name} wins the round!
-            </b>
-          ),
-        }),
-      }));
-      return this.newRound();
+          text: <b style={{ color: '#0e0', fontWeight: 700 }}>{data.winner.name} wins the round!</b>
+        })
+      }))
+      return this.newRound()
     }
-    if (evt === "DRAW") {
-      this.setState((state) => ({
+    if (evt === 'DRAW') {
+      this.setState(state => ({
         notifications: state.notifications.concat({
           date: new Date(),
-          text: (
-            <b style={{ color: "yellow", fontWeight: 700 }}>
-              Stalemate ¯\_(ツ)_/¯
-            </b>
-          ),
-        }),
-      }));
-      return this.newRound();
+          text: <b style={{ color: 'yellow', fontWeight: 700 }}>Stalemate ¯\_(ツ)_/¯</b>
+        })
+      }))
+      return this.newRound()
     }
-    if (evt === "KILL") return this._handleKill(data);
-    if (evt === "DESTROY") return this._handleDestroy(data);
-    if (evt === "END") return this.endGame();
+    if (evt === 'KILL') return this._handleKill(data)
+    if (evt === 'DESTROY') return this._handleDestroy(data)
+    if (evt === 'END') return this.endGame()
   }
 
   _handleDestroy({ player }) {
-    log("*** handleDestroy", player);
-    let notification = ["An Asteroid", "destroyed", player.name].join(" ");
+    log('*** handleDestroy', player)
+    let notification = ['An Asteroid', 'destroyed', player.name].join(' ')
 
-    const { notifications } = this.state;
-    notifications.push({ date: new Date(), text: notification });
+    const { notifications } = this.state
+    notifications.push({ date: new Date(), text: notification })
     this.setState({
-      notifications,
-    });
+      notifications
+    })
   }
 
   _handleKill(data) {
-    let players = window.ClashInstance.getState().playerInstances;
-    let killer = players[data.killer];
-    let killed = _.map(data.killed, (index) => {
-      killsStack.push(data.killer);
-      killer.kills++;
-      players[index].deaths++;
-      return players[index];
-    });
+    let players = window.ClashInstance.getState().playerInstances
+    let killer = players[data.killer]
+    let killed = _.map(data.killed, index => {
+      killsStack.push(data.killer)
+      killer.kills++
+      players[index].deaths++
+      return players[index]
+    })
     let notification = [
       killer.getName(),
-      "killed",
-      _.map(killed, (player) => player.getName()).join(","),
-    ].join(" ");
+      'killed',
+      _.map(killed, player => player.getName()).join(',')
+    ].join(' ')
 
-    this.setState((state) => ({
+    this.setState(state => ({
       notifications: state.notifications.concat({
         date: new Date(),
-        text: notification,
-      }),
-    }));
+        text: notification
+      })
+    }))
 
-    setImmediate(() => this.handleStreak(data.killer, killer, killed));
+    setImmediate(() => this.handleStreak(data.killer, killer, killed))
   }
 
   endGame() {
@@ -383,77 +368,72 @@ class Clash extends React.Component {
       finished: true,
       endTime: Date.now(),
       duration: Date.now() - this.state.startTime,
-      showStats: true,
-    });
+      showStats: true
+    })
   }
 
   handleStreak(index, killer, killed) {
-    let streakCount = _.filter(killsStack, (player) => player === index).length;
-    let multiKill = "";
-    let spreeMessage = "";
-    const { notifications } = this.state;
+    let streakCount = _.filter(killsStack, player => player === index).length
+    let multiKill = ''
+    let spreeMessage = ''
+    const { notifications } = this.state
     if (killsStack.length === 1) {
-      setTimeout(() => playSound(streaks.firstBlood), 150);
+      setTimeout(() => playSound(streaks.firstBlood), 150)
     }
 
     switch (killed.length) {
       case 2:
-        setTimeout(() => playSound(streaks.doubleKill), 200);
-        multiKill = killer.getName() + " got a double kill!";
-        break;
+        setTimeout(() => playSound(streaks.doubleKill), 200)
+        multiKill = killer.getName() + ' got a double kill!'
+        break
       case 3:
-        setTimeout(() => playSound(streaks.tripleKill), 200);
-        multiKill = killer.getName() + " got a Triple Kill!";
-        break;
+        setTimeout(() => playSound(streaks.tripleKill), 200)
+        multiKill = killer.getName() + ' got a Triple Kill!'
+        break
       case 4:
-        setTimeout(() => playSound(streaks.monsterKill), 200);
-        multiKill = killer.getName() + " is a MONSTER KILLER!";
-        break;
+        setTimeout(() => playSound(streaks.monsterKill), 200)
+        multiKill = killer.getName() + ' is a MONSTER KILLER!'
+        break
       default:
-        break;
+        break
     }
     notifications.push({
       date: new Date(),
-      text: multiKill,
-    });
+      text: multiKill
+    })
     if (streakCount > 1) {
-      const currentStreak = this.state.clashjs.gameStats[killer.getId()]
-        .killStreak;
+      const currentStreak = this.state.clashjs.gameStats[killer.getId()].killStreak
       // log('killstreak', streakCount, currentStreak, Math.max(streakCount, currentStreak || 0), killsStack)
       window.ClashInstance._gameStats[killer.getId()].killStreak = Math.max(
         streakCount,
         currentStreak || 0
-      );
+      )
     }
     switch (streakCount) {
       case 2:
-        setTimeout(() => playSound(streaks.killingSpree), 400);
-        spreeMessage = killer.getName() + " is on a killing spree!";
-        break;
+        setTimeout(() => playSound(streaks.killingSpree), 400)
+        spreeMessage = killer.getName() + ' is on a killing spree!'
+        break
       case 3:
-        setTimeout(() => playSound(streaks.dominating), 400);
-        spreeMessage = killer.getName() + " is dominating!";
-        break;
+        setTimeout(() => playSound(streaks.dominating), 400)
+        spreeMessage = killer.getName() + ' is dominating!'
+        break
       case 4:
-        setTimeout(() => playSound(streaks.rampage), 400);
-        spreeMessage = killer.getName() + " is on a rampage of kills!";
-        break;
+        setTimeout(() => playSound(streaks.rampage), 400)
+        spreeMessage = killer.getName() + ' is on a rampage of kills!'
+        break
       default:
-        setTimeout(() => playSound(streaks.ownage), 400);
-        spreeMessage = (
-          <i style={{ color: "lightgray" }}>
-            Can anyone stop {killer.getName()}?!?`
-          </i>
-        );
+        setTimeout(() => playSound(streaks.ownage), 400)
+        spreeMessage = <i style={{ color: 'lightgray' }}>Can anyone stop {killer.getName()}?!?`</i>
     }
-    notifications.push({ date: new Date(), text: spreeMessage });
+    notifications.push({ date: new Date(), text: spreeMessage })
     this.setState({
-      notifications,
-    });
+      notifications
+    })
   }
 
   render() {
-    var {
+    const {
       clashjs,
       shoots,
       notifications,
@@ -465,43 +445,29 @@ class Clash extends React.Component {
       cargoOn,
       showDebug,
       showStats,
-      speed,
-    } = this.state;
-    var {
-      gameEnvironment,
-      gameStats,
-      playerStates,
-      playerInstances,
-      rounds,
-      totalRounds,
-    } = clashjs;
+      speed
+    } = this.state
+    let { gameEnvironment, gameStats, playerStates, playerInstances, rounds, totalRounds } = clashjs
 
     gameEnvironment = gameEnvironment || {
-      gridSize: 13,
-    };
+      gridSize: 13
+    }
 
     _.forEach(playerInstances, (player, index) => {
-      gameStats[player.getId()].isAlive = playerStates[index].isAlive;
-    });
+      gameStats[player.getId()].isAlive = playerStates[index].isAlive
+    })
 
     if (finished) {
       // console.trace('finished')
-      const winner = _.sortBy(
-        gameStats,
-        (playerStats) => playerStats.wins * -1
-      )[0];
+      const winner = _.sortBy(gameStats, playerStats => playerStats.wins * -1)[0]
       notifications.push({
         date: new Date(),
-        text: (
-          <b style={{ color: "#0e0", fontWeight: 700 }}>
-            Congrats {winner.name}!
-          </b>
-        ),
-      });
+        text: <b style={{ color: '#0e0', fontWeight: 700 }}>Congrats {winner.name}!</b>
+      })
       notifications.push({
         date: new Date(),
-        text: "Refresh the page to start again",
-      });
+        text: 'Refresh the page to start again'
+      })
     }
 
     return (
@@ -509,23 +475,17 @@ class Clash extends React.Component {
         <Grid
           columns="1fr 100vmin 1fr"
           rows="auto 1fr"
-          areas={["control game stats", "debug   game notifications"]}
+          areas={['control game stats', 'debug   game notifications']}
         >
           <Cell area="game" onClick={this.handleClick.bind(this)}>
             <div className="clash">
               <Tiles gridSize={gameEnvironment.gridSize} />
-              <Shoots
-                shoots={shoots.slice()}
-                gridSize={gameEnvironment.gridSize}
-              />
+              <Shoots shoots={shoots.slice()} gridSize={gameEnvironment.gridSize} />
               <Ammos
                 gridSize={gameEnvironment.gridSize}
                 ammoPosition={gameEnvironment.ammoPosition}
               />
-              <Cargo
-                gridSize={gameEnvironment.gridSize}
-                cargos={gameEnvironment.cargos}
-              />
+              <Cargo gridSize={gameEnvironment.gridSize} cargos={gameEnvironment.cargos} />
               <Players
                 gridSize={gameEnvironment.gridSize}
                 playerInstances={playerInstances}
@@ -556,9 +516,7 @@ class Clash extends React.Component {
               handleToggleCargo={this.handleToggleCargo.bind(this)}
             />
           </Cell>
-          <Cell area="debug">
-            {showDebug && <DebugPanel playerStates={playerStates} />}
-          </Cell>
+          <Cell area="debug">{showDebug && <DebugPanel playerStates={playerStates} />}</Cell>
           <Cell area="stats"></Cell>
           <Cell area="notifications">
             <Notifications messages={notifications} />
@@ -575,8 +533,8 @@ class Clash extends React.Component {
           gameState={this.state}
         />
       </>
-    );
+    )
   }
 }
 
-export default Clash;
+export default Clash
