@@ -2,28 +2,27 @@ import {
   makeRandomMove,
   calculateHeading,
   findClosestAmmo,
-  threatsFacingMe,
   threats,
   canMoveForward,
   enemiesInRange,
   isActionSafe,
-  calculateDistance,
-} from "../lib/helpers";
+  calculateDistance
+} from '../lib/helpers'
 
-import debug from "debug";
-const log = debug("clashjs:bot:ninjaPuppies");
+import debug from 'debug'
+const log = debug('clashjs:bot:ninjaPuppies')
 
-const findClosestEnemy = function (player, enemies) {
-  log("### ammo, player, game", player, enemies);
+const findClosestEnemy = function(player, enemies) {
+  log('### ammo, player, game', player, enemies)
   const sortedEnemies = enemies
-    .map((enemy) => ({
+    .map(enemy => ({
       position: enemy.position,
-      distance: calculateDistance(player.position, enemy.position),
+      distance: calculateDistance(player.position, enemy.position)
     }))
-    .sort((enemy1, enemy2) => enemy1.distance - enemy2.distance);
+    .sort((enemy1, enemy2) => enemy1.distance - enemy2.distance)
 
-  return sortedEnemies.length > 0 ? sortedEnemies[0].position : null;
-};
+  return sortedEnemies.length > 0 ? sortedEnemies[0].position : null
+}
 
 /**
 1. are we in another player’s range?
@@ -37,30 +36,29 @@ TODO: Figure out what to do with not-alive players
 */
 export default {
   info: {
-    name: "ninjaPuppies",
+    name: 'ninjaPuppies',
     style: 77,
-    team: 5,
+    team: 5
   },
-  ai: function (player, enemies, game) {
-    log("Executing my AI function", player, enemies, game);
+  ai: function(player, enemies, game) {
+    log('Executing my AI function', player, enemies, game)
 
     // Check if we are in immediate danger, if so try to move
     if (threats(player, enemies).length > 0) {
-      if (shootIfAmmo()) return "shoot";
+      if (shootIfAmmo()) return 'shoot'
       // are we facing them too?
       //   do we have ammo? shoot
-      log("In danger! Lets try to move");
+      log('In danger! Lets try to move')
       if (canMoveForward(player, game)) {
-        return "move";
+        return 'move'
       }
     }
 
-
     // Not in danger, so lets see if we can shoot somebody
 
-    if (shootIfAmmo()) return "shoot";
+    if (shootIfAmmo()) return 'shoot'
 
-    const closestAmmo = findClosestAmmo(player, game);
+    const closestAmmo = findClosestAmmo(player, game)
 
     // if we have enough ammo, see if we can find someone to shoot
     if (player.ammo >= 1 || (player.ammo > 0 && !closestAmmo)) {
@@ -71,11 +69,14 @@ export default {
       let counter = 0
       while (closestBadGuyPos) {
         const enemyDirection = calculateHeading(player.position, closestBadGuyPos)
-        const action = (enemyDirection === player.direction) ? 'move' : enemyDirection
+        const action = enemyDirection === player.direction ? 'move' : enemyDirection
         if (isActionSafe(player, action, enemies, game)) {
           return action
         }
-        closestBadGuyPos = findClosestEnemy(player, enemies.filter((enemy) => enemy.position !== closestBadGuyPos))
+        closestBadGuyPos = findClosestEnemy(
+          player,
+          enemies.filter(enemy => enemy.position !== closestBadGuyPos)
+        )
         counter += 1
         if (counter > 10) break
       }
@@ -83,29 +84,29 @@ export default {
 
     // Not in danger, nobody to shoot, lets go collect more ammo
     if (closestAmmo) {
-      log("Found some ammo", closestAmmo);
-      const ammoDir = calculateHeading(player.position, closestAmmo);
+      log('Found some ammo', closestAmmo)
+      const ammoDir = calculateHeading(player.position, closestAmmo)
 
-      log("Heading towards ammo", ammoDir);
+      log('Heading towards ammo', ammoDir)
       if (ammoDir === player.direction) {
-        return "move";
+        return 'move'
       } else {
-        return ammoDir;
+        return ammoDir
       }
     }
 
     // Nothing else to do ... lets just make a random move
-    log("Bummer, found nothing interesting to do ... making random move");
-    return makeRandomMove();
+    log('Bummer, found nothing interesting to do ... making random move')
+    return makeRandomMove()
 
     // If we have ammo and are facing someone, we can shoot them
     function shootIfAmmo() {
-      const targets = enemiesInRange(player, enemies);
+      const targets = enemiesInRange(player, enemies)
       if (player.ammo > 0 && targets.length > 0) {
-        log("Found someone to shoot", targets);
-        return true;
+        log('Found someone to shoot', targets)
+        return true
       }
-      return false;
+      return false
     }
-  },
-};
+  }
+}
