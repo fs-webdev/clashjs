@@ -8,7 +8,7 @@ import {
 } from '../lib/helpers'
 
 import debug from 'debug'
-const log = debug('clashjs:bot:starterbot')
+const log = debug('clashjs:bot:team19Bot')
 
 export default {
   info: {
@@ -17,8 +17,6 @@ export default {
     team: 19
   },
   ai: function(player, enemies, game) {
-    console.log('Executing my AI function', player, enemies, game)
-
     // Not in danger, so lets see if we can shoot somebody
     const targets = enemiesInRange(player, enemies)
     if (player.ammo > 0 && targets.length > 0) {
