@@ -1,6 +1,6 @@
-import React from "react";
-import { sample, range } from "lodash";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React from 'react'
+import { sample, range } from 'lodash'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faPlay,
   faPause,
@@ -18,21 +18,21 @@ import {
   faRocket,
   faMeteor,
   faBan,
-  faGem,
-} from "@fortawesome/free-solid-svg-icons";
-import { Grid, Cell } from "styled-css-grid";
-import styled from "styled-components";
-import Modal from "./Modal";
-import Slider from "./Slider";
+  faGem
+} from '@fortawesome/free-solid-svg-icons'
+import { Grid, Cell } from 'styled-css-grid'
+import styled from 'styled-components'
+import Modal from './Modal'
+import Slider from './Slider'
 
 const Title = styled.header`
   text-align: center;
   margin-top: -1.5em;
-`;
+`
 
 const Card = styled.div`
   padding: 4px;
-`;
+`
 const Image = styled.img`
   display: block;
   margin: auto;
@@ -40,12 +40,12 @@ const Image = styled.img`
   max-height: 15vmin;
   width: auto;
   height: auto;
-`;
+`
 
 const Caption = styled.div`
   padding: 10px 0 2px 0;
   text-align: center;
-`;
+`
 
 const statsIcon = sample([
   faTable,
@@ -55,8 +55,8 @@ const statsIcon = sample([
   faChartArea,
   faPoll,
   faClipboard,
-  faClipboardList,
-]);
+  faClipboardList
+])
 
 export default function ControlPanel({
   running,
@@ -71,25 +71,17 @@ export default function ControlPanel({
   handleToggleStats,
   handleChangeSpeed,
   handleToggleAsteroids,
-  handleToggleCargo,
+  handleToggleCargo
 }) {
-  const [showRockets, setShowRockets] = React.useState(false);
-  const columns = window.innerWidth > 900 ? 10 : 5;
+  const [showRockets, setShowRockets] = React.useState(false)
+  const columns = window.innerWidth > 900 ? 10 : 5
   return (
     <div className="control-panel">
       <button className="circle-button" onClick={handleToggleRunning}>
-        {running ? (
-          <FontAwesomeIcon icon={faPause} />
-        ) : (
-          <FontAwesomeIcon icon={faPlay} />
-        )}
+        {running ? <FontAwesomeIcon icon={faPause} /> : <FontAwesomeIcon icon={faPlay} />}
       </button>
       <button className="circle-button" onClick={handleToggleSounds}>
-        {sounds ? (
-          <FontAwesomeIcon icon={faVolumeUp} />
-        ) : (
-          <FontAwesomeIcon icon={faVolumeMute} />
-        )}
+        {sounds ? <FontAwesomeIcon icon={faVolumeUp} /> : <FontAwesomeIcon icon={faVolumeMute} />}
       </button>
       <button className="circle-button" onClick={handleToggleMusic}>
         {music ? (
@@ -104,36 +96,30 @@ export default function ControlPanel({
           </span>
         )}
       </button>
-      {/* <button
-        className="circle-button"
-        onClick={handleToggleAsteroids}
-      >
+      <button className="circle-button" onClick={handleToggleAsteroids}>
         {asteroids ? (
           <span className="fa-layers fa-fw">
             <FontAwesomeIcon icon={faMeteor} transform="" />
           </span>
         ) : (
-            <span className="fa-layers fa-fw">
-              <FontAwesomeIcon icon={faMeteor} transform="" />
-              <FontAwesomeIcon icon={faBan} transform="grow-12" />
-            </span>
-          )}
+          <span className="fa-layers fa-fw">
+            <FontAwesomeIcon icon={faMeteor} transform="" />
+            <FontAwesomeIcon icon={faBan} transform="grow-12" />
+          </span>
+        )}
       </button>
-      <button
-        className="circle-button"
-        onClick={handleToggleCargo}
-      >
+      <button className="circle-button" onClick={handleToggleCargo}>
         {cargo ? (
           <span className="fa-layers fa-fw">
             <FontAwesomeIcon icon={faGem} transform="" />
           </span>
         ) : (
-            <span className="fa-layers fa-fw">
-              <FontAwesomeIcon icon={faGem} transform="" />
-              <FontAwesomeIcon icon={faBan} transform="grow-12" />
-            </span>
-          )}
-      </button> */}
+          <span className="fa-layers fa-fw">
+            <FontAwesomeIcon icon={faGem} transform="" />
+            <FontAwesomeIcon icon={faBan} transform="grow-12" />
+          </span>
+        )}
+      </button>
       <br />
       <Slider speed={speed} handleChangeSpeed={handleChangeSpeed} />
       <br />
@@ -143,16 +129,12 @@ export default function ControlPanel({
       <button className="circle-button" onClick={() => setShowRockets(true)}>
         <FontAwesomeIcon icon={faRocket} />
       </button>
-      <Modal
-        open={showRockets}
-        onClose={() => setShowRockets(false)}
-        modalStyle="dark-modal"
-      >
+      <Modal open={showRockets} onClose={() => setShowRockets(false)} modalStyle="dark-modal">
         <Title>
           <h2>Rocket Styles</h2>
         </Title>
         <Grid columns={columns}>
-          {range(111).map((i) => {
+          {range(111).map(i => {
             return (
               <Cell width={1} center key={i}>
                 <Card>
@@ -163,10 +145,10 @@ export default function ControlPanel({
                   />
                 </Card>
               </Cell>
-            );
+            )
           })}
         </Grid>
       </Modal>
     </div>
-  );
+  )
 }
