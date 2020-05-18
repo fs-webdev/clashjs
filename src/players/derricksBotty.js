@@ -61,7 +61,7 @@ export default {
       } else {
         if (player.ammo) {
           for (let threat of threats) {
-            if (isTargetVisible(player.position, player.direction, threats[0].position)) {
+            if (isTargetVisible(player.position, player.direction, threat.position)) {
               return 'shoot'
             }
           }

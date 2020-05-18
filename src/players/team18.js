@@ -23,6 +23,8 @@ const directionRight = direction => {
       return 'west'
     case 'west':
       return 'north'
+    default:
+      return
   }
 }
 const directionLeft = direction => {
@@ -35,6 +37,8 @@ const directionLeft = direction => {
       return 'east'
     case 'west':
       return 'south'
+    default:
+      return
   }
 }
 
@@ -44,8 +48,8 @@ const isArmedEnemyNearby = (playerPosition, enemies) => {
     enemies.filter(enemy => {
       return (
         enemy.ammo > 0 &&
-        (playerPosition[VERTICAL] == enemy.position[VERTICAL] ||
-          playerPosition[HORIZONTAL] == enemy.position[HORIZONTAL])
+        (playerPosition[VERTICAL] === enemy.position[VERTICAL] ||
+          playerPosition[HORIZONTAL] === enemy.position[HORIZONTAL])
       )
     }).length > 0
   )

@@ -127,12 +127,12 @@ export default {
           case 'NE':
             // TODO: Face direction that enemy is likely to move into
             break
-          case 'NE':
-            break
-          case 'NE':
-            break
-          case 'NE':
-            break
+          // case 'NE':
+          //   break
+          // case 'NE':
+          //   break
+          // case 'NE':
+          //   break
           default:
             return 'move'
         }

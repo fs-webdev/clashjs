@@ -6,20 +6,19 @@ import {
   canMoveForward,
   enemiesInRange,
   isActionSafe
-} from "../lib/helpers";
+} from '../lib/helpers'
 
 /*
 Improvements:
-how fast bullets move? 
+how fast bullets move?
   Entire row instantly at players position
-Better determine when to shoot people? 
+Better determine when to shoot people?
   Can we track position of other players?
     Enemies have direction, position, and ammo
 Does shooting take up a movement turn? [5]
 Can we turn the ship without moving it? [5]
 Is action safe? [1][x]
 */
-
 
 /*
   Enemies object
@@ -52,7 +51,7 @@ Is action safe? [1][x]
 ]
 */
 
-/* Game 
+/* Game
   {
    "gridSize":7,
    "ammoPosition":[
@@ -82,90 +81,89 @@ Is action safe? [1][x]
 }
 */
 
-import debug from "debug";
-const log = debug("clashjs:bot:starterbot");
-var futureAction;
+import debug from 'debug'
+const log = debug('clashjs:bot:starterbot')
+var futureAction
 
 export default {
   info: {
-    name: "fuzzypuppy",
+    name: 'fuzzypuppy',
     style: 110,
-    team: 4,
+    team: 4
   },
-  ai: function (player, enemies, game) {
-    log("Executing my AI function", player, enemies, game);
+  ai: function(player, enemies, game) {
+    log('Executing my AI function', player, enemies, game)
 
-    function checkForDanger(){
-      if(isActionSafe(player, futureAction, enemies, game)){
-        return futureAction;
-      }else{
-        return '';
+    function checkForDanger() {
+      if (isActionSafe(player, futureAction, enemies, game)) {
+        return futureAction
+      } else {
+        return ''
       }
     }
 
     // Check if we are in immediate danger, if so try to move
     // check up down left right
     if (threatsFacingMe(player, enemies).length > 0) {
-      log("In danger! Lets try to move");
+      log('In danger! Lets try to move')
       // move where? calculate up down left right best position
-      if (canMoveForward(player, game)&&(isActionSafe(player, "move", enemies, game))) {
-        return "move";
-      }else{
+      if (canMoveForward(player, game) && isActionSafe(player, 'move', enemies, game)) {
+        return 'move'
+      } else {
         //I cannot escape danger try to shoot instead
-        const targets = enemiesInRange(player, enemies);
+        const targets = enemiesInRange(player, enemies)
         if (player.ammo > 0 && targets.length > 0) {
-          log("Found someone to shoot", targets);
-          return "shoot";
-        }else{
+          log('Found someone to shoot', targets)
+          return 'shoot'
+        } else {
           //I cannot shoot anyone, time to pray
-          return makeRandomMove();
+          return makeRandomMove()
         }
       }
     }
 
-    function getPlayerNextTile(player){
-      if(player.direction === 'north'){
-        return [player.position[0]+1,player.position[1]]
-      }
-      if(player.direction === 'south'){
-        return [player.position[0]-1,player.position[1]]
-      }
-      if(player.direction === 'east'){
-        return [player.position[0],player.position[1]+1]
-      }
-      if(player.direction === 'west'){
-        return [player.position[0],player.position[1]-1]
-      }
-    }
+    // function getPlayerNextTile(player) {
+    //   if (player.direction === 'north') {
+    //     return [player.position[0] + 1, player.position[1]]
+    //   }
+    //   if (player.direction === 'south') {
+    //     return [player.position[0] - 1, player.position[1]]
+    //   }
+    //   if (player.direction === 'east') {
+    //     return [player.position[0], player.position[1] + 1]
+    //   }
+    //   if (player.direction === 'west') {
+    //     return [player.position[0], player.position[1] - 1]
+    //   }
+    // }
 
-    function calculateClosestSafeZone(){
-        const myPosition = player.position;
-        const myDirection = player.direction;
-        const nextTile = getPlayerNextTile(player);
-        // loop through enemies, how in 1 turn how many enemies could be facing that tile?
-        let potentialDanger = 0;
-        for(let enemy of enemies){
-
-          if(enemy.position[0] < nextTile[0] && enemy.direction === 'south' ){
-            potentialDanger++
-          }
-          if(enemy.position[0] > nextTile[0] && enemy.direction === 'north' ){
-            potentialDanger++
-          }
-          if(enemy.position[1] < nextTile[1] && enemy.direction === 'west'){
-            potentialDanger++
-          }
-          if(enemy.position[1] > nextTile[1] && enemy.direction === 'east'){
-            potentialDanger++
-          }
-        }
-        if(potentialDanger > 0){
-          console.log('figured')
-          return 'west'
-        }
-    }   
+    // function calculateClosestSafeZone() {
+    //   const myPosition = player.position
+    //   const myDirection = player.direction
+    //   const nextTile = getPlayerNextTile(player)
+    //   // loop through enemies, how in 1 turn how many enemies could be facing that tile?
+    //   let potentialDanger = 0
+    //   for (let enemy of enemies) {
+    //     if (enemy.position[0] < nextTile[0] && enemy.direction === 'south') {
+    //       potentialDanger++
+    //     }
+    //     if (enemy.position[0] > nextTile[0] && enemy.direction === 'north') {
+    //       potentialDanger++
+    //     }
+    //     if (enemy.position[1] < nextTile[1] && enemy.direction === 'west') {
+    //       potentialDanger++
+    //     }
+    //     if (enemy.position[1] > nextTile[1] && enemy.direction === 'east') {
+    //       potentialDanger++
+    //     }
+    //   }
+    //   if (potentialDanger > 0) {
+    //     console.log('figured')
+    //     return 'west'
+    //   }
+    // }
     //calculateClosestSafeZone()
-/*
+    /*
     // Move to edges and corners to minimize vulnerable angles
     var farEdge = (game.gridSize)-1; //integer
     var myPosition = player.position; //[x,y]
@@ -181,38 +179,35 @@ export default {
       case 2: closestEdge = "south";
       default: closestEdge = "west";
     }
-    
-*/
-    
 
-    
+*/
 
     // Not in danger, so lets see if we can shoot somebody
-    const targets = enemiesInRange(player, enemies);
+    const targets = enemiesInRange(player, enemies)
     if (player.ammo > 0 && targets.length > 0) {
-      log("Found someone to shoot", targets);
-      futureAction = "shoot";
-      checkForDanger();
+      log('Found someone to shoot', targets)
+      futureAction = 'shoot'
+      checkForDanger()
     }
 
     // Not in danger, nobody to shoot, lets go collect more ammo
-    const closestAmmo = findClosestAmmo(player, game);
+    const closestAmmo = findClosestAmmo(player, game)
 
     if (closestAmmo) {
-      log("Found some ammo", closestAmmo);
-      const ammoDir = calculateHeading(player.position, closestAmmo);
+      log('Found some ammo', closestAmmo)
+      const ammoDir = calculateHeading(player.position, closestAmmo)
 
-      log("Heading towards ammo", ammoDir);
+      log('Heading towards ammo', ammoDir)
       if (ammoDir === player.direction) {
-        futureAction = "move";
-        checkForDanger();
+        futureAction = 'move'
+        checkForDanger()
       } else {
-        return ammoDir;
+        return ammoDir
       }
     }
-      
+
     // Nothing else to do ... lets just make a random move
-    log("Bummer, found nothing interesting to do ... making random move");
-    return makeRandomMove();
-  },
-};
+    log('Bummer, found nothing interesting to do ... making random move')
+    return makeRandomMove()
+  }
+}
