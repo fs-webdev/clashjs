@@ -1,11 +1,11 @@
-var { makeRandomMove } = require("../lib/helpers.js");
+var { makeRandomMove } = require('../lib/helpers.js')
 
 export default {
   info: {
-    name: "random",
+    name: 'random',
     team: 0,
   },
   ai: function (playerState, enemiesStates, gameEnvironment) {
-    return makeRandomMove();
+    return makeRandomMove()
   },
-};
+}

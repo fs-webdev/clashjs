@@ -7,10 +7,10 @@ import {
   isActionSafe,
   enemiesInRange,
   calculateDistance,
-} from "../lib/helpers";
+} from '../lib/helpers'
 
-import debug from "debug";
-const log = debug("clashjs:bot:starterbot");
+import debug from 'debug'
+const log = debug('clashjs:bot:starterbot')
 
 // our custom helper functions
 function findNearestCorner(player, gridSize) {
@@ -70,12 +70,12 @@ function getClosestTrajectory(player, enemy) {
 
 export default {
   info: {
-    name: "nullBot",
+    name: 'nullBot',
     style: 34,
     team: 2,
   },
   ai: function (player, enemies, game) {
-    log("Executing my AI function", player, enemies, game);
+    log('Executing my AI function', player, enemies, game)
     console.log(JSON.stringify(player))
     console.log(JSON.stringify(game))
     console.log(JSON.stringify(enemies))
@@ -83,18 +83,18 @@ export default {
 
     if (enemies.length > 4) {
       if (player.ammo < 1) {
-        const closestAmmo = findClosestAmmo(player, game);
+        const closestAmmo = findClosestAmmo(player, game)
 
         if (closestAmmo) {
-          log("Found some ammo", closestAmmo);
-          const ammoDir = calculateHeading(player.position, closestAmmo);
+          log('Found some ammo', closestAmmo)
+          const ammoDir = calculateHeading(player.position, closestAmmo)
 
-          log("Heading towards ammo", ammoDir);
+          log('Heading towards ammo', ammoDir)
           if (ammoDir === player.direction) {
             const isSafe = isActionSafe(player, 'move', enemies, game)
-            return isSafe ? "move" : ammoDir;
+            return isSafe ? 'move' : ammoDir
           } else {
-            return ammoDir;
+            return ammoDir
           }
         }
       }
@@ -106,7 +106,7 @@ export default {
     // Stayin alive, stayin alive...
     if (threatsFacingMe(player, enemies).length > 0) {
       if (canMoveForward(player, game)) {
-        return "move";
+        return 'move'
       }
     }
 
@@ -123,10 +123,10 @@ export default {
       // - Chase enemy EXCEPT if
       //   - Enemy is facing us
 
-      const targets = enemiesInRange(player, enemies);
+      const targets = enemiesInRange(player, enemies)
       if (player.ammo > 0 && targets.length > 0) {
-        log("Found someone to shoot", targets);
-        return "shoot";
+        log('Found someone to shoot', targets)
+        return 'shoot'
       }
 
       // Find target if we have ammo, otherwise look for ammo
@@ -134,14 +134,14 @@ export default {
 
       // NEED TO MAKE SURE THAT WE DON'T GET INTO LINE OF SIGHT WITHOUT AMMO
       if (target) {
-        log("Found a target", target);
-        const enemyDir = calculateHeading(player.position, target);
+        log('Found a target', target)
+        const enemyDir = calculateHeading(player.position, target)
 
-        log("Heading towards target", enemyDir);
-        let action;
+        log('Heading towards target', enemyDir)
+        let action
         if (enemyDir === player.direction) {
 
-          action = "move"
+          action = 'move'
           if(isActionSafe(player, action, enemies, game)) {
             return action
           }
@@ -158,18 +158,18 @@ export default {
     } else {
       // Grab ammo if none is to be had
       if (player.ammo < 1) {
-        const closestAmmo = findClosestAmmo(player, game);
+        const closestAmmo = findClosestAmmo(player, game)
 
         if (closestAmmo) {
-          log("Found some ammo", closestAmmo);
-          const ammoDir = calculateHeading(player.position, closestAmmo);
+          log('Found some ammo', closestAmmo)
+          const ammoDir = calculateHeading(player.position, closestAmmo)
 
-          log("Heading towards ammo", ammoDir);
+          log('Heading towards ammo', ammoDir)
           if (ammoDir === player.direction) {
             const isSafe = isActionSafe(player, 'move', enemies, game)
-            return isSafe ? "move" : ammoDir;
+            return isSafe ? 'move' : ammoDir
           } else {
-            return ammoDir;
+            return ammoDir
           }
         }
       }
@@ -179,11 +179,11 @@ export default {
         const closestEnemy = getClosestEnemy(player, enemies)
         const trajectory = getClosestTrajectory(player, closestEnemy)
         if (player.ammo > 0 && trajectory === player.direction) {
-          const targets = enemiesInRange(player, enemies);
+          const targets = enemiesInRange(player, enemies)
           if (targets.length > 0) {
-            log("Found someone to shoot", targets);
+            log('Found someone to shoot', targets)
             player.ammo--
-            return "shoot";
+            return 'shoot'
           }
         }
         return trajectory
@@ -230,7 +230,7 @@ export default {
     // }
 
     // Nothing else to do ... lets just make a random move
-    log("Bummer, found nothing interesting to do ... making random move");
-    return makeRandomMove();
+    log('Bummer, found nothing interesting to do ... making random move')
+    return makeRandomMove()
   },
-};
+}
