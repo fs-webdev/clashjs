@@ -133,7 +133,6 @@ const findClosestAmmo = function (player, game) {
 
 const calculateNewPosition = (player, game) => {
   const { position: newPosition, direction } = player;
-
   switch (direction) {
     case DIRECTIONS.NORTH:
       newPosition[VERTICAL] = Math.max(0, newPosition[VERTICAL] - 1);
@@ -212,4 +211,7 @@ module.exports = {
   oppositeDirection,
   isOnAsteroid,
   inDangerOfAsteroid,
+  DIRECTIONS,
+  MOVE,
+  SHOOT
 };
