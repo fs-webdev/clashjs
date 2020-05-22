@@ -184,6 +184,17 @@ const oppositeDirection = function (direction) {
   }
 };
 
+const isOnAsteroid = function (position, asteroids) {
+  //console.log('isonAsteroid', position)
+  const [playerY, playerX] = position;
+  return asteroids.some(asteroid => asteroid.detonateIn >= 0 && asteroid.position[0] === playerY && asteroid.position[1] === playerX)
+}
+
+const inDangerOfAsteroid = function (position, asteroids) {
+  const [playerY, playerX] = position;
+  return asteroids.some(asteroid => asteroid.detonateIn >= 0 && asteroid.detonateIn < 2 && asteroid.position[0] === playerY && asteroid.position[1] === playerX)
+}
+
 module.exports = {
   makeRandomMove,
   sameColumn,
@@ -199,4 +210,6 @@ module.exports = {
   findClosestAmmo,
   isActionSafe,
   oppositeDirection,
+  isOnAsteroid,
+  inDangerOfAsteroid,
 };
