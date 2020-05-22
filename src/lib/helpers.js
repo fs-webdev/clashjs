@@ -88,6 +88,17 @@ function findClosestAmmo(player, game) {
   return sortedAmmo.length > 0 ? sortedAmmo[0].position : null
 }
 
+function inDangerOfAsteroid(position, asteroids) {
+  const [playerY, playerX] = position
+  return asteroids.some(
+    asteroid =>
+      asteroid.detonateIn >= 0 &&
+      asteroid.detonateIn < 2 &&
+      asteroid.position[0] === playerY &&
+      asteroid.position[1] === playerX
+  )
+}
+
 function isActionSafe(player, action, enemies, game) {
   let { position: futureState } = player
 
@@ -96,6 +107,16 @@ function isActionSafe(player, action, enemies, game) {
   }
 
   return threatsFacingMe({ position: futureState }, enemies).length === 0
+}
+
+function isOnAsteroid(position, asteroids) {
+  const [playerY, playerX] = position
+  return asteroids.some(
+    asteroid =>
+      asteroid.detonateIn >= 0 &&
+      asteroid.position[0] === playerY &&
+      asteroid.position[1] === playerX
+  )
 }
 
 function isTargetVisible(playerPosition, playerDirection, targetPosition) {
@@ -179,7 +200,9 @@ module.exports = {
   canMoveForward,
   enemiesInRange,
   findClosestAmmo,
+  inDangerOfAsteroid,
   isActionSafe,
+  isOnAsteroid,
   isTargetVisible,
   makeRandomMove,
   oppositeDirection,
