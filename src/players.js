@@ -1,10 +1,11 @@
 module.exports = {
+  starterbot: require('./players/starterbot'),
+  randombot: require('./players/randombot'),
   myTeamBot: require('./players/team19Bot'),
   DanceDanceRevolution: require('./players/DanceDanceRevolution'),
   awesomebot: require('./players/awesomebot'),
   merlin: require('./players/merlin'),
   ET: require('./players/ET'),
-  random: require('./players/randombot'),
   fuzzypuppy: require('./players/fuzzyPuppy'),
   theDestiny: require('./players/theDestiny'),
   jakob: require('./players/jakobbot'),
