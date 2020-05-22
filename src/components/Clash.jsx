@@ -311,7 +311,7 @@ class Clash extends React.Component {
           text: <b style={{ color: '#0e0', fontWeight: 700 }}>{data.winner.name} wins the round!</b>
         })
       }))
-      return this.newRound()
+      return
     }
     if (evt === 'DRAW') {
       this.setState(state => ({
@@ -471,7 +471,7 @@ class Clash extends React.Component {
       })
       notifications.push({
         date: new Date(),
-        text: 'Refresh the page to start again'
+        text: 'Press the "play again" button to play again'
       })
     }
 
