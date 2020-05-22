@@ -18,7 +18,8 @@ import {
   faRocket,
   faMeteor,
   faBan,
-  faGem
+  faGem,
+  faUser
 } from '@fortawesome/free-solid-svg-icons'
 import { Grid, Cell } from 'styled-css-grid'
 import styled from 'styled-components'
@@ -71,7 +72,8 @@ export default function ControlPanel({
   handleToggleStats,
   handleChangeSpeed,
   handleToggleAsteroids,
-  handleToggleCargo
+  handleToggleCargo,
+  handleTogglePlayerList
 }) {
   const [showRockets, setShowRockets] = React.useState(false)
   const columns = window.innerWidth > 900 ? 10 : 5
@@ -123,6 +125,9 @@ export default function ControlPanel({
       <br />
       <Slider speed={speed} handleChangeSpeed={handleChangeSpeed} />
       <br />
+      <button className="circle-button" onClick={handleTogglePlayerList}>
+        <FontAwesomeIcon icon={faUser} />
+      </button>
       <button className="circle-button" onClick={handleToggleStats}>
         <FontAwesomeIcon icon={statsIcon} />
       </button>
@@ -134,7 +139,7 @@ export default function ControlPanel({
           <h2>Rocket Styles</h2>
         </Title>
         <Grid columns={columns}>
-          {range(111).map(i => {
+          {range(112).map(i => {
             return (
               <Cell width={1} center key={i}>
                 <Card>

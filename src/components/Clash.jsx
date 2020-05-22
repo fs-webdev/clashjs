@@ -9,47 +9,24 @@ import {
   stopMusic,
   streaks
 } from './../lib/sound-effects'
-import Tiles from './Tiles.jsx'
-import Ammos from './Ammos.jsx'
-import Cargo from './Cargo.jsx'
-import Asteroids from './Asteroids.jsx'
-import Players from './Players.jsx'
-import Stats from './Stats.jsx'
-import Shoots from './Shoots.jsx'
-import Notifications from './Notifications.jsx'
-import ControlPanel from './ControlPanel.jsx'
-import DebugPanel from './DebugPanel.jsx'
+import Tiles from './Tiles'
+import Ammos from './Ammos'
+import Cargo from './Cargo'
+import Asteroids from './Asteroids'
+import Players from './Players'
+import Stats from './Stats'
+import Shoots from './Shoots'
+import Notifications from './Notifications'
+import ControlPanel from './ControlPanel'
+import DebugPanel from './DebugPanel'
 import StatsModal from './StatsModal'
+import PlayerSelectModal from './PlayerSelectModal'
 
 import ClashJS from '../clashjs/ClashCore.js'
-
-import playerObjects from '../Players.js'
-
+import playerObjects from '../players.js'
 import debug from 'debug'
 
 const log = debug('clashjs:Clash')
-
-// Filter
-
-let playerArray = _.shuffle(_.map(playerObjects, el => (el.default ? el.default : el)))
-
-const all = bot => true
-const groupA = bot => _.includes([1, 2, 3, 4, 5], bot.info.team)
-const groupB = bot => _.includes([6, 7, 8, 9, 10], bot.info.team)
-const groupC = bot => _.includes([11, 12, 13, 14, 15], bot.info.team)
-const groupD = bot => _.includes([16, 17, 18, 19, 20], bot.info.team)
-const groupE = bot => _.includes([21, 22, 23, 24, 25], bot.info.team)
-const semi1 = bot => _.includes([], bot.info.team)
-const semi2 = bot => _.includes([], bot.info.team)
-const final = bot => _.includes([], bot.info.team)
-const everybody = bot =>
-  _.includes(
-    [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25],
-    bot.info.team
-  )
-
-playerArray = playerArray.filter(groupD)
-
 let killsStack = []
 
 const DEFAULT_SPEED = 200
@@ -59,12 +36,6 @@ class Clash extends React.Component {
   constructor(props) {
     super(props)
 
-    window.ClashInstance = new ClashJS(playerArray, {}, this.handleEvent.bind(this))
-
-    // window.ClashInstance.target.addEventListener("DATA", evt => {
-    //   this.handleEvent(evt.detail.name, evt.detail.data);
-    // });
-
     this.state = {
       running: false,
       showDebug: false,
@@ -72,16 +43,19 @@ class Clash extends React.Component {
       music: false,
       asteroidsOn: true,
       cargoOn: false,
-      clashjs: window.ClashInstance.getState(),
       shoots: [],
       speed: DEFAULT_SPEED,
       speedOverride: undefined,
       notifications: [],
       currentGameIndex: 1,
       finished: false,
+      selectedPlayers: Object.values(playerObjects).map(p => p.default),
+      showPlayerPicker: false,
       showStats: false
     }
+
     this.state.sounds ? enableSounds() : disableSounds()
+    this.initializeGame()
   }
 
   componentDidMount() {
@@ -114,6 +88,11 @@ class Clash extends React.Component {
         this.handleChangeSpeed(1000)
       }
     })
+  }
+
+  initializeGame() {
+    window.ClashInstance = new ClashJS(this.state.selectedPlayers, {}, this.handleEvent.bind(this))
+    this.state.clashjs = window.ClashInstance.getState()
   }
 
   handleClick() {
@@ -202,6 +181,16 @@ class Clash extends React.Component {
         }
       }
     })
+  }
+
+  handleTogglePlayerPicker() {
+    log('handleTogglePlayerPicker', !this.state.showPlayerPicker)
+    this.setState({ showPlayerPicker: !this.state.showPlayerPicker })
+  }
+
+  setSelectedPlayers(selectedPlayers) {
+    log('setSelectedPlayers', selectedPlayers)
+    this.setState({ selectedPlayers })
   }
 
   handleChangeSpeed(newSpeed) {
@@ -444,6 +433,7 @@ class Clash extends React.Component {
       asteroidsOn,
       cargoOn,
       showDebug,
+      showPlayerPicker,
       showStats,
       speed
     } = this.state
@@ -514,6 +504,7 @@ class Clash extends React.Component {
               handleChangeSpeed={this.handleChangeSpeed.bind(this)}
               handleToggleAsteroids={this.handleToggleAsteroids.bind(this)}
               handleToggleCargo={this.handleToggleCargo.bind(this)}
+              handleTogglePlayerList={this.handleTogglePlayerPicker.bind(this)}
             />
           </Cell>
           <Cell area="debug">{showDebug && <DebugPanel playerStates={playerStates} />}</Cell>
@@ -531,6 +522,15 @@ class Clash extends React.Component {
           playerStates={playerStates}
           stats={gameStats}
           gameState={this.state}
+        />
+        <PlayerSelectModal
+          onClose={() => {
+            this.setState({ showPlayerPicker: false })
+            this.initializeGame()
+          }}
+          open={showPlayerPicker}
+          selectedPlayers={this.state.selectedPlayers}
+          setSelectedPlayers={this.setSelectedPlayers.bind(this)}
         />
       </>
     )
