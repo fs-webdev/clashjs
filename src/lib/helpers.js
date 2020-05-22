@@ -198,6 +198,7 @@ module.exports = {
   calculateHeading,
   calculateNewPosition,
   canMoveForward,
+  DIRECTIONS,
   enemiesInRange,
   findClosestAmmo,
   inDangerOfAsteroid,
@@ -205,9 +206,11 @@ module.exports = {
   isOnAsteroid,
   isTargetVisible,
   makeRandomMove,
+  MOVE,
   oppositeDirection,
   sameColumn,
   sameRow,
+  SHOOT,
   threats,
   threatsFacingMe
 }
