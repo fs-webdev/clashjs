@@ -311,7 +311,7 @@ class Clash extends React.Component {
           text: <b style={{ color: '#0e0', fontWeight: 700 }}>{data.winner.name} wins the round!</b>
         })
       }))
-      return
+      return this.newRound()
     }
     if (evt === 'DRAW') {
       this.setState(state => ({
