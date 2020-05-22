@@ -19,7 +19,8 @@ import {
   faMeteor,
   faBan,
   faGem,
-  faUser
+  faUser,
+  faRecycle
 } from '@fortawesome/free-solid-svg-icons'
 import { Grid, Cell } from 'styled-css-grid'
 import styled from 'styled-components'
@@ -66,6 +67,7 @@ export default function ControlPanel({
   speed,
   asteroids,
   cargo,
+  finished,
   handleToggleRunning,
   handleToggleSounds,
   handleToggleMusic,
@@ -80,7 +82,13 @@ export default function ControlPanel({
   return (
     <div className="control-panel">
       <button className="circle-button" onClick={handleToggleRunning}>
-        {running ? <FontAwesomeIcon icon={faPause} /> : <FontAwesomeIcon icon={faPlay} />}
+        {running ? (
+          <FontAwesomeIcon icon={faPause} />
+        ) : finished ? (
+          <FontAwesomeIcon icon={faRecycle} />
+        ) : (
+          <FontAwesomeIcon icon={faPlay} />
+        )}
       </button>
       <button className="circle-button" onClick={handleToggleSounds}>
         {sounds ? <FontAwesomeIcon icon={faVolumeUp} /> : <FontAwesomeIcon icon={faVolumeMute} />}
@@ -139,7 +147,7 @@ export default function ControlPanel({
           <h2>Rocket Styles</h2>
         </Title>
         <Grid columns={columns}>
-          {range(112).map(i => {
+          {range(113).map(i => {
             return (
               <Cell width={1} center key={i}>
                 <Card>

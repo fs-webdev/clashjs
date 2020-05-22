@@ -32,28 +32,31 @@ let killsStack = []
 const DEFAULT_SPEED = 200
 const MAX_SPEED = 50
 
+const initialState = {
+  running: false,
+  showDebug: false,
+  sounds: false,
+  music: false,
+  asteroidsOn: true,
+  cargoOn: false,
+  shoots: [],
+  speed: DEFAULT_SPEED,
+  speedOverride: undefined,
+  notifications: [],
+  currentGameIndex: 1,
+  finished: false,
+  showPlayerPicker: false,
+  showStats: false
+}
+
 class Clash extends React.Component {
   constructor(props) {
     super(props)
 
     this.state = {
-      running: false,
-      showDebug: false,
-      sounds: false,
-      music: false,
-      asteroidsOn: true,
-      cargoOn: false,
-      shoots: [],
-      speed: DEFAULT_SPEED,
-      speedOverride: undefined,
-      notifications: [],
-      currentGameIndex: 1,
-      finished: false,
-      selectedPlayers: Object.values(playerObjects).map(p => p.default),
-      showPlayerPicker: false,
-      showStats: false
+      ...initialState,
+      selectedPlayers: Object.values(playerObjects).map(p => p.default)
     }
-
     this.state.sounds ? enableSounds() : disableSounds()
     this.initializeGame()
   }
@@ -103,16 +106,28 @@ class Clash extends React.Component {
   }
 
   handleToggleRunning() {
-    this.setState(
-      prevState => {
+    if (this.state.finished) {
+      this.setState(prevState => {
+        this.initializeGame()
+
         return {
-          running: !prevState.running
+          ...initialState,
+          clashjs: window.ClashInstance.getState(),
+          selectedPlayers: prevState.selectedPlayers
         }
-      },
-      () => {
-        if (this.state.running) this.nextTurn()
-      }
-    )
+      })
+    } else {
+      this.setState(
+        prevState => {
+          return {
+            running: !prevState.running
+          }
+        },
+        () => {
+          if (this.state.running) this.nextTurn()
+        }
+      )
+    }
   }
 
   handleToggleSounds() {
@@ -490,13 +505,14 @@ class Clash extends React.Component {
           </Cell>
           <Cell area="control">
             <ControlPanel
-              running={running}
+              running={running && !finished}
               sounds={sounds}
               music={music}
               stats={showStats}
               speed={speed}
               asteroids={asteroidsOn}
               cargo={cargoOn}
+              finished={finished}
               handleToggleRunning={this.handleToggleRunning.bind(this)}
               handleToggleSounds={this.handleToggleSounds.bind(this)}
               handleToggleMusic={this.handleToggleMusic.bind(this)}
